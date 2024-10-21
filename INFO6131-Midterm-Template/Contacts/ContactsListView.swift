@@ -11,14 +11,16 @@ struct ContactsListView: View {
                 ForEach(viewModel.filteredContacts(searchText: searchText)) { contact in
                     NavigationLink(destination: ContactDetailView(contact: contact)) {
                         HStack {
-                            Text(contact.fullName) // Use fullName (computed from firstName and lastName)
+                            Text(contact.fullName)
                                 .font(.headline)
                             Spacer()
-                            Image(systemName: contact.isFavorite ? "star.fill" : "star") // Correct isFavourite to isFavorite
+                            Image(systemName: contact.isFavorite ? "star.fill" : "star")
                                 .foregroundColor(contact.isFavorite ? .yellow : .gray)
                         }
                     }
                 }
+                .onDelete(perform: viewModel.deleteContact) // Enable deletion
+                .onMove(perform: viewModel.moveContact)     // Enable reordering
             }
             .navigationTitle("Contacts")
             .toolbar {
@@ -26,12 +28,7 @@ struct ContactsListView: View {
                     Button("Add") {
                         viewModel.addRandomContact()
                     }
-                    Button("Edit") {
-                        viewModel.toggleEditing()
-                    }
-                    Button("Reset") {
-                        viewModel.resetContacts()
-                    }
+                    EditButton() // Use the built-in EditButton to toggle editing mode
                 }
             }
             .searchable(text: $searchText, prompt: "Search Contacts")
